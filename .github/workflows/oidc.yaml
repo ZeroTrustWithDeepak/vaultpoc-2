@@ -1,0 +1,59 @@
+name: Vault OIDC Integration (GitHub → Vault)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write       # REQUIRED for GitHub OIDC
+  contents: read
+
+jobs:
+  vault-secrets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # -------------------------------
+      # Login to Vault using JWT (OIDC)
+      # -------------------------------
+      - name: Read secrets from Vault
+        id: vault
+        uses: hashicorp/vault-action@v2
+        with:
+          method: jwt
+          path: github                     # JWT auth mounted at auth/github
+          url: https://vault-cluster-public-vault-e5e87fcf.5c80253c.z1.hashicorp.cloud:8200
+          namespace: admin
+          role: github-actions-prod
+          secrets: |
+            secret/data/github/db username | DB_USER ;
+            secret/data/github/db password | DB_PASS
+
+      # -----------------------------------------
+      # SAFE verification (no secret values shown)
+      # -----------------------------------------
+      - name: Verify secrets are present (safe)
+        shell: bash
+        run: |
+          for v in DB_USER DB_PASS; do
+            if [ -z "${!v:-}" ]; then
+              echo "❌ $v is EMPTY"
+              exit 1
+            else
+              echo "✅ $v is SET (length=${#v})"
+            fi
+          done
+
+      
+      - name: Debug fingerprint (safe)
+        shell: bash
+        run: |
+          echo "DB_USER_SHA256=$(printf '%s' "$DB_USER" | sha256sum | awk '{print $1}')"
+          echo "DB_PASS_SHA256=$(printf '%s' "$DB_PASS" | sha256sum | awk '{print $1}')"
+          echo "$DB_PASS"
+          echo "$DB_PASS"
