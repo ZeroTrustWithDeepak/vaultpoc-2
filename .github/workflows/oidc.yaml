@@ -31,8 +31,8 @@ jobs:
           namespace: admin
           role: github-role
           secrets: |
-            secret/data/github/db username | DB_USER ;
-            secret/data/github/db password | DB_PASS
+            secret/data/gitpath username | DB_USER ;
+            secret/data/gitpath password | DB_PASS
 
       # -----------------------------------------
       # SAFE verification (no secret values shown)
