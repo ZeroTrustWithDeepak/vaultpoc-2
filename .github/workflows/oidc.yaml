@@ -29,7 +29,7 @@ jobs:
           path: github                     # JWT auth mounted at auth/github
           url: https://vault-cluster-public-vault-e5e87fcf.5c80253c.z1.hashicorp.cloud:8200
           namespace: admin
-          role: github-actions-prod
+          role: github-role
           secrets: |
             secret/data/github/db username | DB_USER ;
             secret/data/github/db password | DB_PASS
