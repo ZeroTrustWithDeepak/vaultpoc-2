@@ -27,12 +27,12 @@ jobs:
         with:
           method: jwt
           path: github-org                     # JWT auth mounted at auth/github
-          url: https://vault-cluster-public-vault-e5e87fcf.5c80253c.z1.hashicorp.cloud:8200
+          url: https://vault-cluster-public-vault-a23da096.b236b2ce.z1.hashicorp.cloud:8200
           namespace: admin
-          role: github-role
+          role: /github-actions-prod
           secrets: |
-            secret/data/gitpath username | DB_USER ;
-            secret/data/gitpath password | DB_PASS
+            secret/data/production/db username | DB_USER ;
+            secret/data/production/db password | DB_PASS
 
       # -----------------------------------------
       # SAFE verification (no secret values shown)
